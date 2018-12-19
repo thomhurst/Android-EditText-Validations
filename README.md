@@ -60,3 +60,7 @@ Usage
                 )
                 // Using validateAndShowError instead will do the exact same as above 
                 // and also show an error on the edit text like editText.error = firstErrorMessage
+
+If you enjoy, please buy me a coffee :)
+
+<a href="https://www.buymeacoffee.com/tomhurst" target="_blank"><img src="https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png" alt="Buy Me A Coffee" style="height: auto !important;width: auto !important;" ></a>
