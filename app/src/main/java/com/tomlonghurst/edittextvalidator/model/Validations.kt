@@ -73,13 +73,7 @@ class Validations(private val editText: EditText) {
     }
 
     fun validationPassed() : Boolean {
-        val failed = validators.filter { it.condition.invoke(editText.text) }
-
-        if(failed.isNotEmpty()) {
-            return false
-        }
-
-        return true
+         return validators.none { it.condition.invoke(editText.text) }
     }
 
     fun validateAndShowError(onValidationPassed: () -> Unit, onValidationFailed: (errorMessages: List<String>) -> Unit) {
