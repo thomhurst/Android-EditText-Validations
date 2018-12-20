@@ -20,31 +20,50 @@ Add the below to your dependencies, again in your gradle.build file
 
      implementation 'com.github.thomhurst:Android-EditText-Validations:{version}'
 
-Usage 
+# Usage 
+Using a reference to your edit text:
 
         val editText = EditText(applicationContext)
+        
+You can define failures in an apply block:
         
         editText.apply {
             failWithMessageIf("Text must not be blank") { it.text.toString().isBlank() }
             failIf { it.text.toString().length > 30 }
             failWithMessageIf("Text must be less than 30 characters") { !it.text.toString().isDigitsOnly() }
         }
-
-        if(editText.validationPassed()) {
-            // This will return either true or false
-        }
+        
+Or you can chain failures together:
 
         editText
                 .failWithMessageIf("Text must not be blank") { it.text.toString().isBlank() }
                 .failIf { it.text.toString().length > 30 }
                 .failWithMessageIf("Text must be less than 30 characters") { !it.text.toString().isDigitsOnly() }
+
+Calling `EditText.validationPassed` will return you a boolean true or false
+
+        if(editText.validationPassed()) {
+            // This will return either true or false based on the failures defined
+        }
+
+Or you can call `EditText.validate` and define code to be executed in a callback; onValidationPassed or onValidationFailed
+
+        editText
                 .validate(
                         onValidationPassed = {
                             // Code to execute if all the validation has passed
                         },
-                        onValidationFailed = { errorMessages ->
-                            // Code to execute if execution has failed.
-                            // Any failed validation messages are returned here so we could set error messages somewhere.
+                        onValidationFailed = {
+                            // Code to execute if any validation has failed.
+                        }
+                )
+                
+You can also call `EditText.validateAndShowError` which will execute the same as `validate`, however it will also apply an error with a message (if you've provided one) to your EditText.
+
+`onValidationFailed` will return a list of error messages that failed. You can then display these however you want. Toast, Snackbar or EditText error, etc.
+
+    onValidationFailed = { errorMessages ->
+                            // Any failed validation messages are returned here so we can set error messages however we like
                             errorMessages.firstOrNull()?.let { firstErrorMessage ->
                                 // Show Error Toast
                                 Toast.makeText(applicationContext, firstErrorMessage, Toast.LENGTH_LONG).show()
@@ -55,11 +74,9 @@ Usage
                                 // Show edit text error
                                 editText.error = firstErrorMessage
                             }
-
                         }
-                )
-                // Using validateAndShowError instead will do the exact same as above 
-                // and also show an error on the edit text like editText.error = firstErrorMessage
+                        
+Using `EditText.failWithMessageRealTimeIf` will cause an Edit Text error to be displayed in real time.. So if while they're typing, they enter data that breaks your validation, this will be flagged instantly.
 
 If you enjoy, please buy me a coffee :)
 
