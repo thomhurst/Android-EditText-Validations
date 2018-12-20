@@ -3,6 +3,7 @@ package com.tomlonghurst.edittextvalidator;
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
+import android.text.Editable;
 import android.widget.EditText;
 import com.tomlonghurst.edittextvalidator.extensions.EditTextKt;
 import kotlin.Unit;
@@ -22,10 +23,10 @@ public class JavaInstrumentedTest {
         Context appContext = InstrumentationRegistry.getTargetContext();
         EditText editText = new EditText(appContext);
 
-        EditTextKt.failIf(editText, new Function1<EditText, Boolean>() {
+        EditTextKt.failIf(editText, new Function1<Editable, Boolean>() {
             @Override
-            public Boolean invoke(EditText editText) {
-                return editText.getText().toString().isEmpty();
+            public Boolean invoke(Editable editable) {
+                return editable.toString().isEmpty();
             }
         });
 
@@ -37,10 +38,10 @@ public class JavaInstrumentedTest {
         Context appContext = InstrumentationRegistry.getTargetContext();
         EditText editText = new EditText(appContext);
 
-        EditTextKt.failWithMessageIf(editText, "Error Message", new Function1<EditText, Boolean>() {
+        EditTextKt.failWithMessageIf(editText, "Error Message", new Function1<Editable, Boolean>() {
             @Override
-            public Boolean invoke(EditText editText) {
-                return editText.getText().toString().isEmpty();
+            public Boolean invoke(Editable editable) {
+                return editable.toString().isEmpty();
             }
         });
 

@@ -1,5 +1,5 @@
 package com.tomlonghurst.edittextvalidator.model
 
-import android.widget.EditText
+import android.text.Editable
 
-data class Validator(val validationMessage: String? = null, val predicate: (EditText) -> Boolean)
+data class Validator(val validationMessage: String? = null, val showErrorRealTime: Boolean = false, val condition: (Editable) -> Boolean)

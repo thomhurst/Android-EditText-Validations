@@ -1,34 +1,75 @@
 package com.tomlonghurst.edittextvalidator.extensions
 
+import android.text.Editable
 import android.widget.EditText
-import com.tomlonghurst.edittextvalidator.LazyWithReceiver
+import com.tomlonghurst.edittextvalidator.R
 import com.tomlonghurst.edittextvalidator.model.Validations
 
-val EditText.validations: Validations
-     by LazyWithReceiver<EditText, Validations> { Validations(this) }
+private val EditText.validations: Validations
+     get() {
+         val existingValidations = getTag(R.id.validations) as? Validations
 
+         return if(existingValidations == null) {
+             val newValidations = Validations(this)
+             this.setTag(R.id.validations, newValidations)
+             newValidations
+         } else {
+             existingValidations
+         }
+     }
+
+/**
+ * Returns true if all validation succeeds
+ * Returns false if any validation fails
+ */
 fun EditText.validationPassed() : Boolean {
     return validations.validationPassed()
 }
 
+/**
+ * onValidationPassed is called if all validation succeeds
+ * onValidationFailed is called if any validation fails with a list of the failed validator error messages
+ */
 fun EditText.validate(onValidationPassed: () -> Unit, onValidationFailed: (errorMessages: List<String>) -> Unit) {
     validations.validate(onValidationPassed, onValidationFailed)
 }
 
+/**
+ * onValidationPassed is called if all validation succeeds
+ * onValidationFailed is called if any validation fails with a list of the failed validator error messages
+ */
 fun EditText.validateAndShowError(onValidationPassed: () -> Unit, onValidationFailed: (errorMessages: List<String>) -> Unit) {
     validations.validateAndShowError(onValidationPassed, onValidationFailed)
 }
 
-fun EditText.failIf(predicate: (EditText) -> Boolean) : EditText {
-    this.validations.failIf(predicate)
+/**
+ * Fail the validation call if the condition executed returns true
+ */
+fun EditText.failIf(condition: (Editable) -> Boolean) : EditText {
+    this.validations.failIf(condition)
     return this
 }
 
-fun EditText.failWithMessageIf(errorMessage: String, predicate: (EditText) -> Boolean) : EditText {
-    this.validations.failWithMessageIf(errorMessage, predicate)
+/**
+ * Fail the validation call if the condition executed returns true
+ * Will return the error message if failed in the onValidationFail callback
+ */
+fun EditText.failWithMessageIf(errorMessage: String, condition: (Editable) -> Boolean) : EditText {
+    this.validations.failWithMessageIf(errorMessage, condition)
     return this
 }
 
+/**
+ * This will also show a validation error in real-time while the user is typing
+ */
+fun EditText.failWithMessageRealTimeIf(errorMessage: String, condition: (Editable) -> Boolean) : EditText {
+    this.validations.failWithMessageRealTime(errorMessage, condition)
+    return this
+}
+
+/**
+ * Remove all validators from the edit text
+ */
 fun EditText.removeAllValidators() {
     validations.removeAllValidators()
 }
