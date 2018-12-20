@@ -28,17 +28,17 @@ Using a reference to your edit text:
 You can define failures in an apply block:
         
         editText.apply {
-            failWithMessageIf("Text must not be blank") { it.text.toString().isBlank() }
-            failIf { it.text.toString().length > 30 }
-            failWithMessageIf("Text must be less than 30 characters") { !it.text.toString().isDigitsOnly() }
+            failWithMessageIf("Text must not be blank") { it.toString().isBlank() }
+            failIf { it.toString().length > 30 }
+            failWithMessageIf("Text must be less than 30 characters") { !it.toString().isDigitsOnly() }
         }
         
 Or you can chain failures together:
 
         editText
-                .failWithMessageIf("Text must not be blank") { it.text.toString().isBlank() }
-                .failIf { it.text.toString().length > 30 }
-                .failWithMessageIf("Text must be less than 30 characters") { !it.text.toString().isDigitsOnly() }
+                .failWithMessageIf("Text must not be blank") { it.toString().isBlank() }
+                .failIf { !it.toString().isDigitsOnly() }
+                .failWithMessageIf("Text must be less than 30 characters") { it.toString().length > 30 }
 
 Calling `EditText.validationPassed` will return you a boolean true or false
 
