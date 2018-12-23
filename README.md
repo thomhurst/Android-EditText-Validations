@@ -28,22 +28,22 @@ Using a reference to your edit text:
 You can define failures in an apply block:
         
         editText.apply {
-            failWithMessageIf("Text must not be blank") { it.toString().isBlank() }
+            failWithMessageIf(errorMessage = "Text must not be blank", condition = { it.toString().isBlank() })
             failIf { it.toString().length > 30 }
-            failWithMessageIf("Text must be less than 30 characters") { !it.toString().isDigitsOnly() }
+            failWithMessageIf(errorMessage = "Text must be less than 30 characters", condition = { !it.toString().isDigitsOnly() })
         }
         
 Or you can chain failures together:
 
         editText
-                .failWithMessageIf("Text must not be blank") { it.toString().isBlank() }
+                .failWithMessageIf(errorMessage = "Text must not be blank", condition = { it.toString().isBlank() })
                 .failIf { !it.toString().isDigitsOnly() }
-                .failWithMessageIf("Text must be less than 30 characters") { it.toString().length > 30 }
+                .failWithMessageIf(errorMessage = "Text must be less than 30 characters", condition = { it.toString().length > 30 })
                 
 As you can see, you can specify your own rules as above, or you can use some of the preset rules by using an enum:
 
         editText
-                .failWithMessageIf("Must not be blank", EditTextCondition.IS_BLANK_OR_EMPTY)
+                .failWithMessageIf(errorMessage =   "Must not be blank", editTextCondition = EditTextCondition.IS_BLANK_OR_EMPTY)
                 
 The enums available are:
     `IS_EMPTY,
