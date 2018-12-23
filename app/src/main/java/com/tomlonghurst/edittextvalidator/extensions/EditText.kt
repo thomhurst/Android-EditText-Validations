@@ -3,9 +3,10 @@ package com.tomlonghurst.edittextvalidator.extensions
 import android.text.Editable
 import android.widget.EditText
 import com.tomlonghurst.edittextvalidator.R
+import com.tomlonghurst.edittextvalidator.enum.EditTextCondition
 import com.tomlonghurst.edittextvalidator.model.Validations
 
-private val EditText.validations: Validations
+internal val EditText.validations: Validations
      get() {
          val existingValidations = getTag(R.id.validations) as? Validations
 
@@ -50,6 +51,12 @@ fun EditText.failIf(condition: (Editable) -> Boolean) : EditText {
     return this
 }
 
+
+fun EditText.failIf(editTextCondition: EditTextCondition) : EditText {
+    this.validations.failIf(editTextCondition)
+    return this
+}
+
 /**
  * Fail the validation call if the condition executed returns true
  * Will return the error message if failed in the onValidationFail callback
@@ -59,11 +66,21 @@ fun EditText.failWithMessageIf(errorMessage: String, condition: (Editable) -> Bo
     return this
 }
 
+fun EditText.failWithMessageIf(errorMessage: String, editTextCondition: EditTextCondition) : EditText {
+    this.validations.failWithMessageIf(errorMessage, editTextCondition)
+    return this
+}
+
 /**
  * This will also show a validation error in real-time while the user is typing
  */
 fun EditText.failWithMessageRealTimeIf(errorMessage: String, condition: (Editable) -> Boolean) : EditText {
     this.validations.failWithMessageRealTime(errorMessage, condition)
+    return this
+}
+
+fun EditText.failWithMessageRealTimeIf(errorMessage: String, editTextCondition: EditTextCondition) : EditText {
+    this.validations.failWithMessageRealTime(errorMessage, editTextCondition)
     return this
 }
 

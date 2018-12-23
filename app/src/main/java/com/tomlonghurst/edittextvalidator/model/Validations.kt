@@ -3,8 +3,9 @@ package com.tomlonghurst.edittextvalidator.model
 import android.text.Editable
 import android.text.TextWatcher
 import android.widget.EditText
+import com.tomlonghurst.edittextvalidator.enum.EditTextCondition
 
-class Validations(private val editText: EditText) {
+internal class Validations(private val editText: EditText) {
 
     private val validators = ListenableArrayList<Validator>(onChange = {
         updateRealTimeValidators()
@@ -18,31 +19,31 @@ class Validations(private val editText: EditText) {
             clear()
         }
 
-            val textWatcher = object : TextWatcher {
-                override fun afterTextChanged(editable: Editable?) {
-                    editable?.let { nonNullEditable ->
-                        editText.error = null
+        val textWatcher = object : TextWatcher {
+            override fun afterTextChanged(editable: Editable?) {
+                editable?.let { nonNullEditable ->
+                    editText.error = null
 
-                        validators.filter { it.showErrorRealTime }.forEach { validator ->
-                            if (validator.condition.invoke(nonNullEditable)) {
-                                editText.error = validator.validationMessage
-                                return@let
-                            }
+                    validators.filter { it.showErrorRealTime }.forEach { validator ->
+                        if (validator.condition.invoke(nonNullEditable)) {
+                            editText.error = validator.validationMessage
+                            return@let
                         }
                     }
                 }
+            }
 
-                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-
-                }
-
-                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-
-                }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
 
             }
-            textWatchers.add(textWatcher)
-            editText.addTextChangedListener(textWatcher)
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+
+            }
+
+        }
+        textWatchers.add(textWatcher)
+        editText.addTextChangedListener(textWatcher)
     }
 
     fun failIf(condition: (Editable) -> Boolean) : Validations {
@@ -60,6 +61,21 @@ class Validations(private val editText: EditText) {
         return this
     }
 
+    fun failIf(editTextCondition: EditTextCondition) : Validations {
+        validators.add(Validator(null, false, editTextCondition))
+        return this
+    }
+
+    fun failWithMessageIf(validationMessage: String, editTextCondition: EditTextCondition) : Validations {
+        validators.add(Validator(validationMessage, false, editTextCondition))
+        return this
+    }
+
+    fun failWithMessageRealTime(validationMessage: String, editTextCondition: EditTextCondition) : Validations {
+        validators.add(Validator(validationMessage, true, editTextCondition))
+        return this
+    }
+
     fun removeAllValidators() {
         validators.clear()
     }
@@ -73,7 +89,7 @@ class Validations(private val editText: EditText) {
     }
 
     fun validationPassed() : Boolean {
-         return validators.none { it.condition.invoke(editText.text) }
+        return validators.none { it.condition.invoke(editText.text) }
     }
 
     fun validateAndShowError(onValidationPassed: () -> Unit, onValidationFailed: (errorMessages: List<String>) -> Unit) {

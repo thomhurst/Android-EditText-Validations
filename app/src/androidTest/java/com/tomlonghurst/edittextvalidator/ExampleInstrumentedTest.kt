@@ -3,6 +3,7 @@ package com.tomlonghurst.edittextvalidator
 import android.support.test.InstrumentationRegistry
 import android.support.test.runner.AndroidJUnit4
 import android.widget.EditText
+import com.tomlonghurst.edittextvalidator.enum.EditTextCondition
 import com.tomlonghurst.edittextvalidator.extensions.*
 import org.junit.Assert
 import org.junit.Test
@@ -257,5 +258,224 @@ class ExampleInstrumentedTest {
         editText.setText("ERROR")
         Assert.assertNull(editText.error)
     }
+
+    @Test
+    fun email_Test_Failures() {
+        val emails = arrayListOf("tom@tom", "eaiotei", "", "a@a@a", "a.a.a", "@.com", "a@.com", "@a.com")
+        for(email in emails) {
+            val appContext = InstrumentationRegistry.getTargetContext()
+            val editText = EditText(appContext).apply {
+                setText(email)
+            }
+
+            editText
+                .failWithMessageIf("Not Valid Email", EditTextCondition.NOT_VALID_EMAIL)
+
+            editText.validate(
+                onValidationPassed = {
+                    throw Exception("Should Fail: $email")
+                },
+                onValidationFailed = {
+                    Assert.assertEquals(1, it.size)
+                    Assert.assertEquals(it.first(), "Not Valid Email")
+                })
+        }
+    }
+
+    @Test
+    fun email_Test_Passes() {
+        val emails = arrayListOf("hidarima@grangmi.ga", "itjij@v58tk1r6kp2ft01.cf", "Husbad1993@teleworm.us", "oreppuzuss-1458@yopmail.com", "sanasrowa123y@zn4chyguz9rz2gvjcq.tk", "56_4dim6@fakemailgenerator.net", "sanasrowa123y@lawrence1121.multiple.domain.club", "test@a.b.c.d.e.com")
+        for(email in emails) {
+            val appContext = InstrumentationRegistry.getTargetContext()
+            val editText = EditText(appContext).apply {
+                setText(email)
+            }
+
+            editText
+                .failWithMessageIf("Not Valid Email", EditTextCondition.NOT_VALID_EMAIL)
+
+            editText.validate(
+                onValidationPassed = {
+
+                },
+                onValidationFailed = {
+                    throw Exception("Should Pass: $email")
+                })
+        }
+    }
+
+    @Test
+    fun letters_Only_Fail() {
+        val texts = arrayListOf("123", "abc123", "a!", "Hello-World", "Hello_World","Hi?")
+        for(text in texts) {
+            val appContext = InstrumentationRegistry.getTargetContext()
+            val editText = EditText(appContext).apply {
+                setText(text)
+            }
+
+            editText
+                .failWithMessageIf("Letters Only", EditTextCondition.NOT_LETTERS_ONLY)
+
+            editText.validate(
+                onValidationPassed = {
+                    throw Exception("Should Fail: $text")
+                },
+                onValidationFailed = {
+                    Assert.assertEquals(1, it.size)
+                    Assert.assertEquals(it.first(), "Letters Only")
+                })
+        }
+    }
+
+    @Test
+    fun letters_Only_Pass() {
+        val texts = arrayListOf("h", "hello", "HELLO", "Hello")
+        for(text in texts) {
+            val appContext = InstrumentationRegistry.getTargetContext()
+            val editText = EditText(appContext).apply {
+                setText(text)
+            }
+
+            editText
+                .failWithMessageIf("Letters Only", EditTextCondition.NOT_LETTERS_ONLY)
+
+            editText.validate(
+                onValidationPassed = {
+
+                },
+                onValidationFailed = {
+                    throw Exception("Should Pass: $text")
+                })
+        }
+    }
+
+    @Test
+    fun numbers_Only_Fail() {
+        val texts = arrayListOf("abc", "abc123", "1!", "1-2", "1_2","1?")
+        for(text in texts) {
+            val appContext = InstrumentationRegistry.getTargetContext()
+            val editText = EditText(appContext).apply {
+                setText(text)
+            }
+
+            editText
+                .failWithMessageIf("Numbers Only", EditTextCondition.NOT_NUMBERS_ONLY)
+
+            editText.validate(
+                onValidationPassed = {
+                    throw Exception("Should Fail: $text")
+                },
+                onValidationFailed = {
+                    Assert.assertEquals(1, it.size)
+                    Assert.assertEquals(it.first(), "Numbers Only")
+                })
+        }
+    }
+
+    @Test
+    fun numbers_Only_Pass() {
+        val texts = arrayListOf("1", "123", "12345", "12345678910")
+        for(text in texts) {
+            val appContext = InstrumentationRegistry.getTargetContext()
+            val editText = EditText(appContext).apply {
+                setText(text)
+            }
+
+            editText
+                .failWithMessageIf("Numbers Only", EditTextCondition.NOT_NUMBERS_ONLY)
+
+            editText.validate(
+                onValidationPassed = {
+
+                },
+                onValidationFailed = {
+                    throw Exception("Should Pass: $text")
+                })
+        }
+    }
+
+    @Test
+    fun empty_Fail() {
+        val text = ""
+        val appContext = InstrumentationRegistry.getTargetContext()
+        val editText = EditText(appContext).apply {
+            setText(text)
+        }
+
+        editText
+            .failWithMessageIf("Must not be empty", EditTextCondition.IS_EMPTY)
+
+        editText.validate(
+            onValidationPassed = {
+                throw Exception("Should Fail: $text")
+            },
+            onValidationFailed = {
+                Assert.assertEquals(1, it.size)
+                Assert.assertEquals(it.first(), "Must not be empty")
+            })
+    }
+
+    @Test
+    fun empty_Pass() {
+        val text = " "
+        val appContext = InstrumentationRegistry.getTargetContext()
+        val editText = EditText(appContext).apply {
+            setText(text)
+        }
+
+        editText
+            .failWithMessageIf("Must not be empty", EditTextCondition.IS_EMPTY)
+
+        editText.validate(
+            onValidationPassed = {
+
+            },
+            onValidationFailed = {
+                throw Exception("Should Pass: $text")
+            })
+    }
+
+    @Test
+    fun blank_Fail() {
+        val text = " "
+        val appContext = InstrumentationRegistry.getTargetContext()
+        val editText = EditText(appContext).apply {
+            setText(text)
+        }
+
+        editText
+            .failWithMessageIf("Must not be blank", EditTextCondition.IS_BLANK_OR_EMPTY)
+
+        editText.validate(
+            onValidationPassed = {
+                throw Exception("Should Fail: $text")
+            },
+            onValidationFailed = {
+                Assert.assertEquals(1, it.size)
+                Assert.assertEquals(it.first(), "Must not be blank")
+            })
+    }
+
+    @Test
+    fun blank_Pass() {
+        val text = " ."
+        val appContext = InstrumentationRegistry.getTargetContext()
+        val editText = EditText(appContext).apply {
+            setText(text)
+        }
+
+        editText
+            .failWithMessageIf("Must not be blank", EditTextCondition.IS_BLANK_OR_EMPTY)
+
+        editText.validate(
+            onValidationPassed = {
+
+            },
+            onValidationFailed = {
+                throw Exception("Should Pass: $text")
+            })
+    }
+
+
 
 }
