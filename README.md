@@ -39,6 +39,20 @@ Or you can chain failures together:
                 .failWithMessageIf("Text must not be blank") { it.toString().isBlank() }
                 .failIf { !it.toString().isDigitsOnly() }
                 .failWithMessageIf("Text must be less than 30 characters") { it.toString().length > 30 }
+                
+As you can see, you can specify your own rules as above, or you can use some of the preset rules by using an enum:
+
+        editText
+                .failWithMessageIf("Must not be blank", EditTextCondition.IS_BLANK_OR_EMPTY)
+                
+The enums available are:
+    `IS_EMPTY,
+    IS_BLANK_OR_EMPTY,
+    NOT_VALID_EMAIL,
+    NOT_LETTERS_ONLY,
+    NOT_NUMBERS_ONLY,
+    NOT_LETTERS_OR_NUMBERS_ONLY,
+    CONTAINS_SPECIAL_CHARACTERS`
 
 Calling `EditText.validationPassed` will return you a boolean true or false
 
