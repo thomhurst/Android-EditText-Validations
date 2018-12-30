@@ -7,90 +7,111 @@ This library is best used with Kotlin, and is to help reduce boilerplate code wh
 
 To install:
 
-Add Jitpack to your repositories in your gradle.build file
+Add Jitpack to your repositories in your `build.gradle` file
 
-    allprojects {
-        repositories {
-          ...
-          maven { url 'https://jitpack.io' }
-        }
-      }
+```groovy
+allprojects {
+    repositories {
+      // ...
+      maven { url 'https://jitpack.io' }
+    }
+}
+```
 
 Add the below to your dependencies, again in your gradle.build file
 
-     implementation 'com.github.thomhurst:Android-EditText-Validations:{version}'
+```groovy
+implementation 'com.github.thomhurst:Android-EditText-Validations:{version}'
+```
 
 # Usage 
 Using a reference to your edit text:
 
-        val editText = EditText(applicationContext)
+```kotlin
+val editText = EditText(applicationContext)
+```
         
 You can define failures in an apply block:
         
-        editText.apply {
-            failWithMessageIf(errorMessage = "Text must not be blank", condition = { it.toString().isBlank() })
-            failIf { it.toString().length > 30 }
-            failWithMessageIf(errorMessage = "Text must be less than 30 characters", condition = { !it.toString().isDigitsOnly() })
-        }
+```kotlin
+editText.apply {
+    failWithMessageIf(errorMessage = "Text must not be blank", condition = { it.toString().isBlank() })
+    failIf { it.toString().length > 30 }
+    failWithMessageIf(errorMessage = "Text must be less than 30 characters", condition = { !it.toString().isDigitsOnly() })
+}
+```
         
 Or you can chain failures together:
 
-        editText
-                .failWithMessageIf(errorMessage = "Text must not be blank", condition = { it.toString().isBlank() })
-                .failIf { !it.toString().isDigitsOnly() }
-                .failWithMessageIf(errorMessage = "Text must be less than 30 characters", condition = { it.toString().length > 30 })
+```kotlin
+editText
+    .failWithMessageIf(errorMessage = "Text must not be blank", condition = { it.toString().isBlank() })
+    .failIf { !it.toString().isDigitsOnly() }
+    .failWithMessageIf(errorMessage = "Text must be less than 30 characters", condition = { it.toString().length > 30 })
+```
                 
 As you can see, you can specify your own rules as above, or you can use some of the preset rules by using an enum:
 
-        editText
-                .failWithMessageIf(errorMessage =   "Must not be blank", editTextCondition = EditTextCondition.IS_BLANK_OR_EMPTY)
+```kotlin
+editText
+    .failWithMessageIf(errorMessage = "Must not be blank", editTextCondition = EditTextCondition.IS_BLANK_OR_EMPTY)
+```
                 
 The enums available are:
-    `IS_EMPTY,
+
+```kotlin
+    IS_EMPTY,
     IS_BLANK_OR_EMPTY,
     NOT_VALID_EMAIL,
     NOT_LETTERS_ONLY,
     NOT_NUMBERS_ONLY,
     NOT_LETTERS_OR_NUMBERS_ONLY,
-    CONTAINS_SPECIAL_CHARACTERS`
+    CONTAINS_SPECIAL_CHARACTERS
+```    
 
-Calling `EditText.validationPassed` will return you a boolean true or false
+Calling `EditText.validationPassed` will return you a boolean `true` or `false`
 
-        if(editText.validationPassed()) {
-            // This will return either true or false based on the failures defined
+```kotlin
+if (editText.validationPassed()) {
+    // This will return either true or false based on the failures defined
+}
+```
+
+Or you can call `EditText.validate` and define code to be executed in a callback; `onValidationPassed` or `onValidationFailed`
+
+```kotlin
+editText
+    .validate(
+        onValidationPassed = {
+            // Code to execute if all the validation has passed
+        },
+        onValidationFailed = {
+            // Code to execute if any validation has failed.
         }
-
-Or you can call `EditText.validate` and define code to be executed in a callback; onValidationPassed or onValidationFailed
-
-        editText
-                .validate(
-                        onValidationPassed = {
-                            // Code to execute if all the validation has passed
-                        },
-                        onValidationFailed = {
-                            // Code to execute if any validation has failed.
-                        }
-                )
+    )
+```
                 
 You can also call `EditText.validateAndShowError` which will execute the same as `validate`, however it will also apply an error with a message (if you've provided one) to your EditText.
 
 `onValidationFailed` will return a list of error messages that failed. You can then display these however you want. Toast, Snackbar or EditText error, etc.
 
-    onValidationFailed = { errorMessages ->
-                            // Any failed validation messages are returned here so we can set error messages however we like
-                            errorMessages.firstOrNull()?.let { firstErrorMessage ->
-                                // Show Error Toast
-                                Toast.makeText(applicationContext, firstErrorMessage, Toast.LENGTH_LONG).show()
+```kotlin
+onValidationFailed = { errorMessages ->
+    // Any failed validation messages are returned here so we can set error messages however we like
+    errorMessages.firstOrNull()?.let { firstErrorMessage ->
+        // Show Error Toast
+        Toast.makeText(applicationContext, firstErrorMessage, Toast.LENGTH_LONG).show()
 
-                                // Show error snackbar
-                                Snackbar.make(findViewById(android.R.id.content), firstErrorMessage, Snackbar.LENGTH_INDEFINITE).show()
+        // Show error snackbar
+        Snackbar.make(findViewById(android.R.id.content), firstErrorMessage, Snackbar.LENGTH_INDEFINITE).show()
 
-                                // Show edit text error
-                                editText.error = firstErrorMessage
-                            }
-                        }
+        // Show edit text error
+        editText.error = firstErrorMessage
+    }
+}
+```
                         
-Using `EditText.failWithMessageRealTimeIf` will cause an Edit Text error to be displayed in real time.. So if while they're typing, they enter data that breaks your validation, this will be flagged instantly.
+Using `EditText.failWithMessageRealTimeIf` will cause an EditText error to be displayed in real time. So, if while they're typing, they enter data that breaks your validation, this will be flagged instantly.
 
 If you enjoy, please buy me a coffee :)
 
