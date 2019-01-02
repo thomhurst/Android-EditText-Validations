@@ -1,6 +1,6 @@
 package com.tomlonghurst.edittextvalidator.model
 
-class ListenableArrayList<T>(private val onChange: () -> Unit) : AbstractMutableList<T>() {
+internal class ListenableArrayList<T>(private val onChange: () -> Unit) : AbstractMutableList<T>() {
 
     private val delegate = ArrayList<T>()
 

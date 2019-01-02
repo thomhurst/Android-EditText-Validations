@@ -99,4 +99,8 @@ internal class Validations(private val editText: EditText) {
 
         validate(onValidationPassed, onValidationFailed)
     }
+
+    fun failedValidationMessages(): List<String> {
+        return validators.filter { it.condition.invoke(editText.text) }.mapNotNull { it.validationMessage }.filter { it.isNotBlank() }
+    }
 }

@@ -66,8 +66,8 @@ fun EditText.failWithMessageIf(errorMessage: String, condition: (Editable) -> Bo
     return this
 }
 
-fun EditText.failWithMessageIf(errorMessage: String, editTextCondition: EditTextCondition) : EditText {
-    this.validations.failWithMessageIf(errorMessage, editTextCondition)
+fun EditText.failWithMessageIf(errorMessage: String, condition: EditTextCondition) : EditText {
+    this.validations.failWithMessageIf(errorMessage, condition)
     return this
 }
 
@@ -90,3 +90,6 @@ fun EditText.failWithMessageRealTimeIf(errorMessage: String, editTextCondition: 
 fun EditText.removeAllValidators() {
     validations.removeAllValidators()
 }
+
+val EditText.failedValidationMessages: List<String>
+    get() = validations.failedValidationMessages()

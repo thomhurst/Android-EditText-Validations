@@ -240,7 +240,7 @@ class ExampleInstrumentedTest {
         val editText = EditText(appContext)
 
         editText
-            .failWithMessageRealTimeIf("Error Message") { it.toString() == "ERROR" }
+            .failWithMessageRealTimeIf("Error Message", condition = { it.toString() == "ERROR" })
             .failWithMessageRealTimeIf("Error Message2") { it.toString() == "ERROR2" }
             .failWithMessageRealTimeIf("Error Message3") { it.toString() == "ERROR3" }
 
@@ -444,7 +444,7 @@ class ExampleInstrumentedTest {
         }
 
         editText
-            .failWithMessageIf("Must not be blank", EditTextCondition.IS_BLANK_OR_EMPTY)
+            .failWithMessageIf(errorMessage = "Must not be blank", condition = EditTextCondition.IS_BLANK_OR_EMPTY)
 
         editText.validate(
             onValidationPassed = {
@@ -474,6 +474,140 @@ class ExampleInstrumentedTest {
             onValidationFailed = {
                 throw Exception("Should Pass: $text")
             })
+    }
+
+    @Test
+    fun collectionTest1_3Failures() {
+        val text = ""
+        val appContext = InstrumentationRegistry.getTargetContext()
+
+
+        val editText1 = EditText(appContext).apply {
+            setText(text)
+            failWithMessageIf("Must not be blank", EditTextCondition.IS_BLANK_OR_EMPTY)
+        }
+
+        val editText2 = EditText(appContext).apply {
+            setText(text)
+            failWithMessageIf("Must not be blank", EditTextCondition.IS_BLANK_OR_EMPTY)
+        }
+
+        val editText3 = EditText(appContext).apply {
+            setText(text)
+            failWithMessageIf("Must not be blank", EditTextCondition.IS_BLANK_OR_EMPTY)
+        }
+
+        EditTextValidation.validate(editText1, editText2, editText3,
+            onValidationPassed = {
+                throw Exception("Should Fail")
+            },
+            onValidationFailed = { failedEditTexts ->
+                Assert.assertEquals(3, failedEditTexts.size)
+            })
+    }
+
+    @Test
+    fun collectionTest2_3Failures() {
+        val text = ""
+        val appContext = InstrumentationRegistry.getTargetContext()
+
+
+        val editText1 = EditText(appContext).apply {
+            setText(text)
+            failWithMessageIf("Must not be blank", EditTextCondition.IS_BLANK_OR_EMPTY)
+        }
+
+        val editText2 = EditText(appContext).apply {
+            setText(text)
+            failWithMessageIf("Must not be blank", EditTextCondition.IS_BLANK_OR_EMPTY)
+        }
+
+        val editText3 = EditText(appContext).apply {
+            setText(text)
+            failWithMessageIf("Must not be blank", EditTextCondition.IS_BLANK_OR_EMPTY)
+        }
+
+        setOf(editText1, editText2, editText3).validate(
+            onValidationPassed = {
+                throw Exception("Should Fail")
+            },
+            onValidationFailed = { failedEditTexts ->
+                Assert.assertEquals(3, failedEditTexts.size)
+            })
+    }
+
+    @Test
+    fun collectionTest3_3Failures() {
+        val text = ""
+        val appContext = InstrumentationRegistry.getTargetContext()
+
+
+        val editText1 = EditText(appContext).apply {
+            setText(text)
+            failWithMessageIf("Must not be blank", EditTextCondition.IS_BLANK_OR_EMPTY)
+        }
+
+        val editText2 = EditText(appContext).apply {
+            setText(text)
+            failWithMessageIf("Must not be blank", EditTextCondition.IS_BLANK_OR_EMPTY)
+        }
+
+        val editText3 = EditText(appContext).apply {
+            setText(text)
+            failWithMessageIf("Must not be blank", EditTextCondition.IS_BLANK_OR_EMPTY)
+        }
+
+        listOf(editText1, editText2, editText3).validate(
+            onValidationPassed = {
+                throw Exception("Should Fail")
+            },
+            onValidationFailed = { failedEditTexts ->
+                Assert.assertEquals(3, failedEditTexts.size)
+            })
+    }
+
+    @Test
+    fun collectionTest1_2Failures() {
+        val appContext = InstrumentationRegistry.getTargetContext()
+
+        val editText1 = EditText(appContext).apply {
+            setText("")
+            failWithMessageIf("Must not be blank", EditTextCondition.IS_BLANK_OR_EMPTY)
+        }
+
+        val editText2 = EditText(appContext).apply {
+            setText("")
+            failWithMessageIf("Must not be blank", EditTextCondition.IS_BLANK_OR_EMPTY)
+        }
+
+        val editText3 = EditText(appContext).apply {
+            setText(".")
+            failWithMessageIf("Must not be blank", EditTextCondition.IS_BLANK_OR_EMPTY)
+        }
+
+        EditTextValidation.validate(editText1, editText2, editText3,
+            onValidationPassed = {
+                throw Exception("Should Fail")
+            },
+            onValidationFailed = { failedEditTexts ->
+                Assert.assertEquals(2, failedEditTexts.size)
+            })
+    }
+
+    @Test
+    fun getErrorMessages() {
+        val appContext = InstrumentationRegistry.getTargetContext()
+
+        val editText1 = EditText(appContext).apply {
+            setText("")
+            failWithMessageIf("Must not be blank", EditTextCondition.IS_BLANK_OR_EMPTY)
+            failWithMessageIf("Error Message") { it.toString() == "ERROR" }
+        }
+
+        editText1.failedValidationMessages.let {
+            Assert.assertEquals(1, it.size)
+            Assert.assertEquals("Must not be blank", it.first())
+        }
     }
 
 
