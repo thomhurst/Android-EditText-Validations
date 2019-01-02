@@ -113,6 +113,86 @@ onValidationFailed = { errorMessages ->
                         
 Using `EditText.failWithMessageRealTimeIf` will cause an EditText error to be displayed in real time. So, if while they're typing, they enter data that breaks your validation, this will be flagged instantly.
 
+You can dynamically get the failed error messages at any time using `EditText.failedValidationMessages` which will return a list of error messages.
+
+# Collections
+
+To validate multiple text fields at once, you have a few ways:
+
+```kotlin
+if(editText1.validationPassed() && editText2.validationPassed() && editText3.validationPassed()) {
+            ...
+        }
+```
+
+```kotlin
+// Varargs of EditTexts using EditTextValidation helper class
+EditTextValidation.validationPassed(editText1, editText2, editText3) // Boolean - True or False
+
+// Collection of EditTexts using EditTextValidation helper class
+EditTextValidation.validationPassed(listOf(editText1, editText2, editText3)) // Boolean - True or False
+```
+
+```kotlin
+// Varargs of EditTexts using EditTextValidation helper class
+EditTextValidation.validate(editText1, editText2, editText3,
+            onValidationPassed = {
+                ...
+            },
+            onValidationFailed = { failedEditTexts ->
+                ...
+            })
+
+// Collection of EditTexts using EditTextValidation helper class
+EditTextValidation.validate(listOf(editText1, editText2, editText3),
+            onValidationPassed = {
+                ...
+            },
+            onValidationFailed = { failedEditTexts ->
+                ...
+            })
+```
+
+```kotlin
+// Set of EditTexts using Collection Extension Method
+setOf(editText1, editText2, editText3).validationPassed() // Boolean - True or False
+
+// List of EditTexts using Collection Extension Method
+listOf(editText1, editText2, editText3).validationPassed() // Boolean - True or False
+```
+
+```kotlin
+// Set of EditTexts using Collection Extension Method
+setOf(editText1, editText2, editText3).validate(
+            onValidationPassed = {
+                ...
+            },
+            onValidationFailed = { failedEditTexts ->
+                ...
+            })
+            
+// List of EditTexts using Collection Extension Method
+listOf(editText1, editText2, editText3).validate(
+            onValidationPassed = {
+                ...
+            },
+            onValidationFailed = { failedEditTexts ->
+                ...
+            })
+```
+
+And to easily grab error messages within these collection callbacks:
+
+```kotlin
+onValidationFailed = { failedEditTexts ->
+                failedEditTexts.forEach { failedEditText ->
+                    failedEditText.failedValidationMessages.forEach { failedValidationMessage ->
+                        failedEditText.error = failedValidationMessage
+                    }
+                }
+            }
+```
+
 If you enjoy, please buy me a coffee :)
 
 <a href="https://www.buymeacoffee.com/tomhurst" target="_blank"><img src="https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png" alt="Buy Me A Coffee" style="height: auto !important;width: auto !important;" ></a>
