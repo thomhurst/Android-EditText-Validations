@@ -3,6 +3,7 @@ Easily Validate EditTexts
 
 [![](https://jitpack.io/v/thomhurst/Android-EditText-Validations.svg)](https://jitpack.io/#thomhurst/Android-EditText-Validations)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/d013eeed324c4ff8a581dfbad88ea779)](https://www.codacy.com/app/thomhurst/Android-EditText-Validations?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=thomhurst/Android-EditText-Validations&amp;utm_campaign=Badge_Grade)
+[![Android Weekly](https://img.shields.io/badge/Android%20Weekly-341-blue.svg)](http://androidweekly.net/issues/issue-341)
 
 This library is best used with Kotlin, and is to help reduce boilerplate code when writing validation rules for EditText fields.
 
