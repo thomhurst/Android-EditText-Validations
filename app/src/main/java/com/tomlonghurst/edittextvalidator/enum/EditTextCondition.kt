@@ -1,5 +1,8 @@
 package com.tomlonghurst.edittextvalidator.enum
 
+/**
+ * Predefined conditions to be used with EditText.failIf { }
+ */
 enum class EditTextCondition {
     IS_EMPTY,
     IS_BLANK_OR_EMPTY,

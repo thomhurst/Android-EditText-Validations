@@ -24,7 +24,7 @@ Add the below to your dependencies, again in your gradle.build file
 implementation 'com.github.thomhurst:Android-EditText-Validations:{version}'
 ```
 
-# Usage 
+## Usage 
 Using a reference to your edit text:
 
 ```kotlin
@@ -115,7 +115,7 @@ Using `EditText.failWithMessageRealTimeIf` will cause an EditText error to be di
 
 You can dynamically get the failed error messages at any time using `EditText.failedValidationMessages` which will return a list of error messages.
 
-# Collections
+## Collections
 
 To validate multiple text fields at once, you have a few ways:
 

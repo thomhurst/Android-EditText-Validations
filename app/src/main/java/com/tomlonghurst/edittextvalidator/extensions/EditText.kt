@@ -51,7 +51,9 @@ fun EditText.failIf(condition: (Editable) -> Boolean) : EditText {
     return this
 }
 
-
+/**
+ * Fail the validation call if the condition defined in the EditTextCondition returns true
+ */
 fun EditText.failIf(editTextCondition: EditTextCondition) : EditText {
     this.validations.failIf(editTextCondition)
     return this
@@ -66,6 +68,9 @@ fun EditText.failWithMessageIf(errorMessage: String, condition: (Editable) -> Bo
     return this
 }
 
+/**
+ * Fail the validation call if the condition defined in the EditTextCondition returns true
+ */
 fun EditText.failWithMessageIf(errorMessage: String, condition: EditTextCondition) : EditText {
     this.validations.failWithMessageIf(errorMessage, condition)
     return this
@@ -79,6 +84,9 @@ fun EditText.failWithMessageRealTimeIf(errorMessage: String, condition: (Editabl
     return this
 }
 
+/**
+ * This will also show a validation error in real-time while the user is typing
+ */
 fun EditText.failWithMessageRealTimeIf(errorMessage: String, editTextCondition: EditTextCondition) : EditText {
     this.validations.failWithMessageRealTime(errorMessage, editTextCondition)
     return this
@@ -91,5 +99,8 @@ fun EditText.removeAllValidators() {
     validations.removeAllValidators()
 }
 
+/**
+ * Returns any validation messages that are currently failing
+ */
 val EditText.failedValidationMessages: List<String>
     get() = validations.failedValidationMessages()
