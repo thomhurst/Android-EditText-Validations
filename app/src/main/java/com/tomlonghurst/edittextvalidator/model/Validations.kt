@@ -27,7 +27,7 @@ internal class Validations(private val editText: EditText) {
                     validators.filter { it.showErrorRealTime }.forEach { validator ->
                         if (validator.condition.invoke(nonNullEditable)) {
                             editText.error = validator.validationMessage
-                            return@let
+                            return
                         }
                     }
                 }
