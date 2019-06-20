@@ -2,81 +2,198 @@
 Easily Validate EditTexts
 
 [![](https://jitpack.io/v/thomhurst/Android-EditText-Validations.svg)](https://jitpack.io/#thomhurst/Android-EditText-Validations)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/d013eeed324c4ff8a581dfbad88ea779)](https://www.codacy.com/app/thomhurst/Android-EditText-Validations?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=thomhurst/Android-EditText-Validations&amp;utm_campaign=Badge_Grade)
+[![Android Weekly](https://img.shields.io/badge/Android%20Weekly-341-blue.svg)](http://androidweekly.net/issues/issue-341)
 
 This library is best used with Kotlin, and is to help reduce boilerplate code when writing validation rules for EditText fields.
 
 To install:
 
-Add Jitpack to your repositories in your gradle.build file
+Add Jitpack to your repositories in your `build.gradle` file
 
-    allprojects {
-        repositories {
-          ...
-          maven { url 'https://jitpack.io' }
-        }
-      }
+```groovy
+allprojects {
+    repositories {
+      // ...
+      maven { url 'https://jitpack.io' }
+    }
+}
+```
 
 Add the below to your dependencies, again in your gradle.build file
 
-     implementation 'com.github.thomhurst:Android-EditText-Validations:{version}'
+```groovy
+implementation 'com.github.thomhurst:Android-EditText-Validations:{version}'
+```
 
-# Usage 
+## Usage 
 Using a reference to your edit text:
 
-        val editText = EditText(applicationContext)
+```kotlin
+val editText = EditText(applicationContext)
+```
         
 You can define failures in an apply block:
         
-        editText.apply {
-            failWithMessageIf("Text must not be blank") { it.toString().isBlank() }
-            failIf { it.toString().length > 30 }
-            failWithMessageIf("Text must be less than 30 characters") { !it.toString().isDigitsOnly() }
-        }
+```kotlin
+editText.apply {
+    failWithMessageIf(errorMessage = "Text must not be blank", condition = { it.toString().isBlank() })
+    failIf { it.toString().length > 30 }
+    failWithMessageIf(errorMessage = "Text must be less than 30 characters", condition = { !it.toString().isDigitsOnly() })
+}
+```
         
 Or you can chain failures together:
 
-        editText
-                .failWithMessageIf("Text must not be blank") { it.toString().isBlank() }
-                .failIf { !it.toString().isDigitsOnly() }
-                .failWithMessageIf("Text must be less than 30 characters") { it.toString().length > 30 }
+```kotlin
+editText
+    .failWithMessageIf(errorMessage = "Text must not be blank", condition = { it.toString().isBlank() })
+    .failIf { !it.toString().isDigitsOnly() }
+    .failWithMessageIf(errorMessage = "Text must be less than 30 characters", condition = { it.toString().length > 30 })
+```
+                
+As you can see, you can specify your own rules as above, or you can use some of the preset rules by using an enum:
 
-Calling `EditText.validationPassed` will return you a boolean true or false
+```kotlin
+editText
+    .failWithMessageIf(errorMessage = "Must not be blank", editTextCondition = EditTextCondition.IS_BLANK_OR_EMPTY)
+```
+                
+The enums available are:
 
-        if(editText.validationPassed()) {
-            // This will return either true or false based on the failures defined
+```kotlin
+    IS_EMPTY,
+    IS_BLANK_OR_EMPTY,
+    NOT_VALID_EMAIL,
+    NOT_LETTERS_ONLY,
+    NOT_NUMBERS_ONLY,
+    NOT_LETTERS_OR_NUMBERS_ONLY,
+    CONTAINS_SPECIAL_CHARACTERS
+```    
+
+Calling `EditText.validationPassed` will return you a boolean `true` or `false`
+
+```kotlin
+if (editText.validationPassed()) {
+    // This will return either true or false based on the failures defined
+}
+```
+
+Or you can call `EditText.validate` and define code to be executed in a callback; `onValidationPassed` or `onValidationFailed`
+
+```kotlin
+editText
+    .validate(
+        onValidationPassed = {
+            // Code to execute if all the validation has passed
+        },
+        onValidationFailed = {
+            // Code to execute if any validation has failed.
         }
-
-Or you can call `EditText.validate` and define code to be executed in a callback; onValidationPassed or onValidationFailed
-
-        editText
-                .validate(
-                        onValidationPassed = {
-                            // Code to execute if all the validation has passed
-                        },
-                        onValidationFailed = {
-                            // Code to execute if any validation has failed.
-                        }
-                )
+    )
+```
                 
 You can also call `EditText.validateAndShowError` which will execute the same as `validate`, however it will also apply an error with a message (if you've provided one) to your EditText.
 
 `onValidationFailed` will return a list of error messages that failed. You can then display these however you want. Toast, Snackbar or EditText error, etc.
 
-    onValidationFailed = { errorMessages ->
-                            // Any failed validation messages are returned here so we can set error messages however we like
-                            errorMessages.firstOrNull()?.let { firstErrorMessage ->
-                                // Show Error Toast
-                                Toast.makeText(applicationContext, firstErrorMessage, Toast.LENGTH_LONG).show()
+```kotlin
+onValidationFailed = { errorMessages ->
+    // Any failed validation messages are returned here so we can set error messages however we like
+    errorMessages.firstOrNull()?.let { firstErrorMessage ->
+        // Show Error Toast
+        Toast.makeText(applicationContext, firstErrorMessage, Toast.LENGTH_LONG).show()
 
-                                // Show error snackbar
-                                Snackbar.make(findViewById(android.R.id.content), firstErrorMessage, Snackbar.LENGTH_INDEFINITE).show()
+        // Show error snackbar
+        Snackbar.make(findViewById(android.R.id.content), firstErrorMessage, Snackbar.LENGTH_INDEFINITE).show()
 
-                                // Show edit text error
-                                editText.error = firstErrorMessage
-                            }
-                        }
+        // Show edit text error
+        editText.error = firstErrorMessage
+    }
+}
+```
                         
-Using `EditText.failWithMessageRealTimeIf` will cause an Edit Text error to be displayed in real time.. So if while they're typing, they enter data that breaks your validation, this will be flagged instantly.
+Using `EditText.failWithMessageRealTimeIf` will cause an EditText error to be displayed in real time. So, if while they're typing, they enter data that breaks your validation, this will be flagged instantly.
+
+You can dynamically get the failed error messages at any time using `EditText.failedValidationMessages` which will return a list of error messages.
+
+## Collections
+
+To validate multiple text fields at once, you have a few ways:
+
+```kotlin
+if(editText1.validationPassed() && editText2.validationPassed() && editText3.validationPassed()) {
+            ...
+        }
+```
+
+```kotlin
+// Varargs of EditTexts using EditTextValidation helper class
+EditTextValidation.validationPassed(editText1, editText2, editText3) // Boolean - True or False
+
+// Collection of EditTexts using EditTextValidation helper class
+EditTextValidation.validationPassed(listOf(editText1, editText2, editText3)) // Boolean - True or False
+```
+
+```kotlin
+// Varargs of EditTexts using EditTextValidation helper class
+EditTextValidation.validate(editText1, editText2, editText3,
+            onValidationPassed = {
+                ...
+            },
+            onValidationFailed = { failedEditTexts ->
+                ...
+            })
+
+// Collection of EditTexts using EditTextValidation helper class
+EditTextValidation.validate(listOf(editText1, editText2, editText3),
+            onValidationPassed = {
+                ...
+            },
+            onValidationFailed = { failedEditTexts ->
+                ...
+            })
+```
+
+```kotlin
+// Set of EditTexts using Collection Extension Method
+setOf(editText1, editText2, editText3).validationPassed() // Boolean - True or False
+
+// List of EditTexts using Collection Extension Method
+listOf(editText1, editText2, editText3).validationPassed() // Boolean - True or False
+```
+
+```kotlin
+// Set of EditTexts using Collection Extension Method
+setOf(editText1, editText2, editText3).validate(
+            onValidationPassed = {
+                ...
+            },
+            onValidationFailed = { failedEditTexts ->
+                ...
+            })
+            
+// List of EditTexts using Collection Extension Method
+listOf(editText1, editText2, editText3).validate(
+            onValidationPassed = {
+                ...
+            },
+            onValidationFailed = { failedEditTexts ->
+                ...
+            })
+```
+
+And to easily grab error messages within these collection callbacks:
+
+```kotlin
+onValidationFailed = { failedEditTexts ->
+                failedEditTexts.forEach { failedEditText ->
+                    failedEditText.failedValidationMessages.forEach { failedValidationMessage ->
+                        failedEditText.error = failedValidationMessage
+                    }
+                }
+            }
+```
 
 If you enjoy, please buy me a coffee :)
 
