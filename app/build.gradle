@@ -1,3 +1,8 @@
+ext {
+    PUBLISH_GROUP_ID = 'com.tomlonghurst'
+    PUBLISH_ARTIFACT_ID = 'android-edittext-validations'
+}
+
 apply plugin: 'com.android.library'
 
 apply plugin: 'kotlin-android'
@@ -20,8 +25,8 @@ android {
         }
     }
 
-    packagingOptions {
-        exclude 'META-INF/app_release.kotlin_module'
+    compileOptions {
+        kotlinOptions.freeCompilerArgs += ['-module-name', "$PUBLISH_GROUP_ID.$PUBLISH_ARTIFACT_ID"]
     }
 }
 
